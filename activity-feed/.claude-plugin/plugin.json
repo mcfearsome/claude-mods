@@ -1,6 +1,6 @@
 {
   "name": "activity-feed",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Live pane of everything the agent does: a radial graph of prompts, model requests, tool calls, memory, subagents, skills, MCP calls, hooks and permission checks, with per-turn token counts.",
   "author": { "name": "mcfearsome" },
   "homepage": "https://github.com/mcfearsome/claude-mods/tree/main/activity-feed",
