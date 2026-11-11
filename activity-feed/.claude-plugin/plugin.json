@@ -1,5 +1,11 @@
 {
   "name": "activity-feed",
   "version": "0.1.0",
-  "description": "Live pane of everything the agent does: prompts, turns, model requests, tool calls, memory reads/writes, subagents, skills, MCP calls, permission checks, compactions, deliveries."
+  "description": "Live pane of everything the agent does: a radial graph of prompts, model requests, tool calls, memory, subagents, skills, MCP calls, hooks and permission checks, with per-turn token counts.",
+  "author": { "name": "mcfearsome" },
+  "homepage": "https://github.com/mcfearsome/claude-mods/tree/main/activity-feed",
+  "repository": "https://github.com/mcfearsome/claude-mods",
+  "license": "MIT",
+  "keywords": ["activity", "observability", "graph", "pane", "tokens", "subagents", "mod"],
+  "types": "./types/index.d.ts"
 }
