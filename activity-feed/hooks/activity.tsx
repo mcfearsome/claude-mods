@@ -32,6 +32,7 @@ type Mounted = { kind: 'raster'; cols: number; rows: number } | { kind: 'image';
 let mounted: Mounted | undefined
 // Set when this terminal showed the Image's alt text instead of pixels.
 let imagesFail = false
+let imageDenies = 0
 let didWarnTmux = false
 let wasLive = false
 let isTicking = false
@@ -54,13 +55,20 @@ const tick = async ($: EngineInterface) => {
       m.kind === 'raster'
         ? await $.ui.blit({ requestId: PANE, key: 'graph', cells: rasterFrame(list, now, m.cols, m.rows, sub) })
         : await $.ui.blit({ requestId: PANE, key: 'graph', source: { rgba: pixelFrame(list, now, m.w, m.h, sub), width: m.w, height: m.h } })
-    if (r.deny === undefined) return
+    if (r.deny === undefined) {
+      if (m.kind === 'image') imageDenies = 0
+      return
+    }
     mounted = undefined
     if (m.kind === 'image' && !/^no-surface|not mounted|size/i.test(r.deny)) {
-      imagesFail = true
-      if (r.fix === 'tmux-passthrough' && !didWarnTmux) {
-        didWarnTmux = true
-        $.ui.toast('Activity: tmux is hiding images. Run `tmux set -g allow-passthrough on; tmux set -g focus-events on`.')
+      // One refused frame (a resize, a reload) only redraws; braille takes over
+      // after a few in a row, or at once when tmux is what blocks images.
+      if (r.fix === 'tmux-passthrough' || ++imageDenies >= 3) {
+        imagesFail = true
+        if (r.fix === 'tmux-passthrough' && !didWarnTmux) {
+          didWarnTmux = true
+          $.ui.toast('Activity: tmux is hiding images. Run `tmux set -g allow-passthrough on; tmux set -g focus-events on`.')
+        } else if (r.fix === undefined) $.ui.toast(`Activity: pixels off (${r.deny}). Retry: /activity pixels`)
       }
       $.ui.invalidate('ui.render')
     }
@@ -158,6 +166,7 @@ export const register: Register = on => {
     }
     if (arg === 'pixels' || arg === 'braille' || arg === 'auto') {
       imagesFail = false
+      imageDenies = 0
       await update($, mode, () => arg)
       await $.ui.open({ id: PANE, title: 'Activity' })
       return { text: `Activity graph: ${arg}.` }
