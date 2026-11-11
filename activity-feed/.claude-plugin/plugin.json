@@ -1,0 +1,5 @@
+{
+  "name": "activity-feed",
+  "version": "0.1.0",
+  "description": "Live pane of everything the agent does: prompts, turns, model requests, tool calls, memory reads/writes, subagents, skills, MCP calls, permission checks, compactions, deliveries."
+}
